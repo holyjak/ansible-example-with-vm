@@ -1,0 +1,7 @@
+[all:vars]
+env=staging
+
+# Staging appservers
+[appservers]
+app1.staging.example.com jboss_host_type=master
+app2.staging.example.com jboss_host_type=slave

@@ -1,0 +1,4 @@
+---
+# site.yaml - just delegate to other playbooks
+- include: bootstrap-rhel5.yml
+- include: appservers.yml

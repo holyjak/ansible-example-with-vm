@@ -1,0 +1,7 @@
+[all:vars]
+is_vagrant_vm=True
+env=vagrant
+
+[appservers]
+10.0.2.2:4444 jboss_host_type=master 
+# ^ host machine's IP + port forwarded from the centos-vm VM

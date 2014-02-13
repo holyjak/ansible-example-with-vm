@@ -1,0 +1,49 @@
+---
+- name: Install some basic dependencies
+  yum: name={{item}} state=present
+  with_items:
+   - unzip
+
+- name: Make /opt/jboss
+  file: path=/opt/jboss state=directory
+
+  # Ex.: http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip -> jboss-as-7.1.1.Final/
+- name: Download JBoss
+  get_url: url="http://download.jboss.org/jbossas/{{ jboss_version_short_numeric }}/jboss-{{ jboss_version_full }}/jboss-{{ jboss_version_full }}.zip"
+    dest=/opt/jboss-{{ jboss_version_full }}.zip
+
+- name: Extract archive
+  command: chdir=/opt/jboss /usr/bin/unzip -q /opt/jboss-{{ jboss_version_full }}.zip creates=/opt/jboss/jboss-{{ jboss_version_extracted }}
+
+- name: Copying domain.xml configuration file
+  template: src=domain.xml dest=/opt/jboss/jboss-{{ jboss_version_extracted }}/domain/configuration/
+  notify: restart jboss
+  tags:
+    - jboss_configuration
+
+- name: Copying host.xml configuration file
+  template: src=host.xml dest=/opt/jboss/jboss-{{ jboss_version_extracted }}/domain/configuration/
+  notify: restart jboss
+  tags:
+    - jboss_configuration
+
+- name: Add group "jboss"
+  group: name=jboss
+
+- name: Add user "jboss"
+  user: name=jboss group=jboss home=/opt/jboss
+
+- name: Copy the init script
+  copy: src=jboss-as-domain.sh dest=/etc/init.d/jboss mode=0755 owner=root group=root
+
+- name: JBoss directory symlink to current version
+  file: src=/opt/jboss/jboss-{{ jboss_version_extracted }} dest=/opt/jboss/jboss-as state=link
+
+- name: Install/upgrade JBoss modules
+  include: modules.yml
+
+- name: Change ownership of JBoss installation
+  file: path=/opt/jboss owner=jboss group=jboss state=directory recurse=yes
+
+- name: Enable JBoss to be started at boot
+  service: name=jboss enabled=yes state=started

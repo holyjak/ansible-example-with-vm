@@ -1,0 +1,9 @@
+---
+- name: Deploy iptables rules
+  template: src=iptables-save dest=/etc/sysconfig/iptables
+  notify: restart iptables
+
+- name: "Install OpenJDK"
+  yum: name={{item}} state=present
+  with_items:
+   - java-1.7.0-openjdk

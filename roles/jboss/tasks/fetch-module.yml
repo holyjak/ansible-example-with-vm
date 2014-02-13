@@ -1,0 +1,27 @@
+# Download modules to jboss
+# variables:
+# - name - for use in task names
+# - url - URL of the module zip
+# - creates - what dir under modules it creates (to skip it when already there)
+# (- jboss_version_extracted - jboss version such as 6.2)
+- name: Check if module {{ name }} present
+  stat: path=/opt/jboss/jboss-{{ jboss_version_extracted }}/modules/{{ creates }}
+  register: module_product
+  tags: jboss_module
+
+- name: Download module {{ name }}
+  get_url: url={{ url }} dest=/tmp/ansible-jboss-module.zip
+  tags: jboss_module
+  register: download
+  when: not (module_product.stat.exists is defined and module_product.stat.exists == true)
+
+- name: Unpack module {{ name }}
+  command: chdir=/opt/jboss/jboss-{{ jboss_version_extracted }}/modules /usr/bin/unzip -o /tmp/ansible-jboss-module.zip
+  notify:
+    - restart jboss
+  tags: jboss_module
+  when: download|changed
+
+- name: Cleanup module {{ name }}
+  file: path=/tmp/ansible-jboss-module.zip state=absent
+  tags: jboss_module

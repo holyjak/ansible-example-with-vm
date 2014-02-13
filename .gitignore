@@ -1,0 +1,4 @@
+ansible-vm/.vagrant/
+centos-vm/.vagrant/
+centos-vm/*.war
+secret_vars.yml

@@ -1,0 +1,10 @@
+# Taks to install/upgrade modules in JBoss
+
+# 1. Infinispan module
+- include: fetch-module.yml
+  vars:
+    name: infinispan
+    url: http://downloads.jboss.org/infinispan/5.3.0.Final/infinispan-as-modules-5.3.0.Final.zip
+    creates: org/infinispan
+
+# more modules to follow ...

@@ -1,0 +1,10 @@
+# Variables for appservers
+
+jboss_ports:
+  ajp: 8009
+  http: 8080
+  https: 8443
+  osgi_http: 8090
+  remoting: 4447
+  management_native: 9999
+  management_http: 9990

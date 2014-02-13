@@ -1,0 +1,10 @@
+# Variables for JBoss
+# Note: some versions of jboss have full version (e.g. 6.2.0) in the zip name
+# and short one (6.2) in the extracted dir name so we distinguish the two here
+# even though they are same for 7.1.1
+jboss_version_short_numeric: 7.1
+
+jboss_version_full_numeric: "{{ jboss_version_short_numeric }}.1.Final"
+jboss_version_full: as-{{ jboss_version_full_numeric }}
+
+jboss_version_extracted: "{{ jboss_version_full }}"

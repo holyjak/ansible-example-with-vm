@@ -1,0 +1,11 @@
+---
+# appservers
+# BEWARE See the README for limitations and prerequisities
+- hosts: appservers
+  sudo: yes
+
+  roles:
+    - jboss
+    - { role: vagrant, when: is_vagrant_vm|default(False)|bool, tags: ['vagrant'] }
+  vars_files:
+    - secret_vars.yml
