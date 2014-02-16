@@ -1,10 +1,10 @@
-# APT setup: 
+# APT setup:
 # - run apt update
 # - add ppt repos
 # - support localy stored archives
 class apt_setup {
 
-  class {'apt': } # from puppetlabs/apt module - f.ex. support for apt::ppa {'pkg':}
+  class {'apt': always_apt_update => true, } # from puppetlabs/apt module - f.ex. support for apt::ppa {'pkg':}
 
   $local_repo='/vagrant/offline/apt-archives'
 
