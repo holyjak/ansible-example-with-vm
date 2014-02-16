@@ -9,7 +9,7 @@ This project has three things of interest:
 2. A Vagrant/VirtualBox virtual machine with Ansible & co. to make it easy to run it (even on Windows)
 3. Another VM that can be used to test the configuration
 
-It might be therefore a good base for Ansible projects of your own.
+And of course all the plumbing that makes them work together. It might be therefore a good base for Ansible projects of your own.
 
 ### Little background: Ansible and Vagrant
 
@@ -21,20 +21,19 @@ It might be therefore a good base for Ansible projects of your own.
 
 #### Vagrant - Ansible integration tips
 
-Set `config.ssh.forward_agent = true` in the `ansible-vm` to make it easier to make your prive keys available to Ansible for SSH into remote machines. (See "Testing locally" below for more details.)
+Set `config.ssh.forward_agent = true` in the `ansible-vm` and use `ssh-agent` to make it easier to make your prive keys available to Ansible for SSH into remote machines. (See "Testing locally" below for more details.)
 
-Add `mount_options: ['dmode=0775','fmode=0664']` for mounting the directory with Ansible configuration so that the inventory file won't seem to be executable to Ansible.
+Add `mount_options: ['dmode=0775','fmode=0664']` for mounting the directory with Ansible configuration so that the inventory file won't seem to be executable to Ansible. (Otherwise Ansible believes it is a script and tries to execute it.)
 
 #### Ansible
 
-General: Use roles to split configuration into separate concerns (jboss, vagrant), use variables to handle variation between environments and usages of a role (f.ex. JBoss' ports, `jboss_host_type` = `master|slave`, `env` = `vagrant|staging|production`). Use tags to mark parts of the configuration so that those parts can be picked and executed without the rest (f.ex. `jboss_module`, `jboss_configuration`, `vagrant`).
+*General*: Use roles to split configuration into separate concerns (jboss, vagrant), use variables to handle variation between environments and usages of a role (f.ex. JBoss' ports, `jboss_host_type` = `master|slave`, `env` = `vagrant|staging|production`). Use tags to mark parts of the configuration so that those parts can be picked and executed without the rest (f.ex. `jboss_module`, `jboss_configuration`, `vagrant`).
 
-Secret local credentials vars file: the configuration includes variables from the file `secret_vars.yml`, which is added to `.gitignore` so that it won't be checked into Git and every user has to create her own local copy based on `secret_vars.yml.example`. Thus sensitive credentials never leave the local machine.
+*Secret local credentials vars file*: the configuration includes variables from the file `secret_vars.yml`, which is added to `.gitignore` so that it won't be checked into Git and every user has to create her own local copy based on `secret_vars.yml.example`. Thus sensitive credentials never leave the local machine.
 
-Reuse via parametrized include and simulating `creates` for `get_url`. To avoid the need to keep downloaded archives, I use `stat` to check for the presence of a file/directory and `while` to skip `get_url` if it exists. The whole thing is in a task include file, `roles/jboss/tasks/fetch-module.yml`, that is parametrized so that it can be reused to fetch and unpack three different modules - see `roles/jboss/tasks/modules.yml`.
-w/ - using `stat` and checking file/dir existence.
+*Reuse via parametrized include and simulating `creates` for `get_url`*. To avoid the need to keep downloaded archives, I use `stat` to check for the presence of a file/directory and `while` to skip `get_url` if it exists. The whole thing is in a task include file, `roles/jboss/tasks/fetch-module.yml`, that is parametrized so that it can be reused to fetch and unpack three different modules - see `roles/jboss/tasks/modules.yml`.
 
-Multiple environments - here`vagrant` and `staging` via two different inventory files.
+*Multiple environments* - here`vagrant` and `staging` via two different inventory files.
 
 #### Gotchas
 
@@ -95,7 +94,7 @@ VM, it is recommended to use ssh-agent, adding the vagrant key to it via `ssh-ad
 
 Windows: Use Git Bash and [enable ssh-agent](https://help.github.com/articles/working-with-ssh-key-passphrases#auto-launching-ssh-agent-on-msysgit) as described in GitHub Help, adding the line `ssh-add ~/.vagrant.d/insecure_private_key` to it. Use the same Bash (?) to run `vagrant up` under `ansible-vm`.
 
-Alternatively, run ansible with `--ask-pass` or `-k`, the password "vagrant".
+Alternatively, run ansible with `--ask-pass` or `-k`, the password is "vagrant".
 
 1. Run the test `centos-vm` - go to the directory and run `vagrant up`
 2. Run `ansible-vm` - go to the directory and run `vagrant up` and then `vagrant ssh`
@@ -122,4 +121,4 @@ Notes:
 * `--ask-pass` is necessary if ssh asks for password, i.e. if you haven't set up password-less ssh
 * `--ask-sudo-pass` (or `-K`) is necessary if your user hasn't password-less sudo access on the server
 * You can use `--tags` to execute only a subset of the tasks (provided the have been tagged);
-  ex.: `--tags newrelic,jboss_module,jboss_configuration`
+  ex.: `--tags jboss_module,jboss_configuration`
