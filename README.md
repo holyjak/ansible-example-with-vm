@@ -11,6 +11,8 @@ This project has three things of interest:
 
 And of course all the plumbing that makes them work together. It might be therefore a good base for Ansible projects of your own.
 
+*Disclaimer: I am quite new to Ansible.*
+
 ### Little background: Ansible and Vagrant
 
 [Ansible](http://docs.ansible.com/) is a devops tool for configuring servers over SSH, using just Python. It is similar to Puppet and Chef but does not need you to install anything on the servers (essentialy every \*nix has Python 2.4+ and SSH, and it even works with the old RHEL 5.9), the configuration is by defaut pushed from the control machine instead of pulled by the servers, and it has strong focus on simplicity. It is less mature than Puppet and has fewer plugins and no support for Windows yet but the simplicity, minimal requirements, and push model are good reasons to consider it.
