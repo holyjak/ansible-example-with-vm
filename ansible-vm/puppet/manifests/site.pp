@@ -20,5 +20,9 @@ apt::source {'saucy-backports':
 exec {'make ansible visible': command => '/usr/bin/apt-get update', before => Package['ansible'], }
 package {'ansible': ensure => '1.4.4+dfsg-1~ubuntu13.10.1', }
 
+## Tip: replace the above with the following, after downloading https://forge.puppetlabs.com/ithempel/ppa 1.0.2
+#ppa::repo { 'rquillo/ansible': supported  => ['saucy'], } ->
+#package {'ansible': ensure => '1.5-saucy-unstable1', }
+
 # Ansible needs sshpass when using passwords instead of keys for authentication; cowsay improves the fun factor
 package {['sshpass', 'cowsay']: ensure => installed, }
